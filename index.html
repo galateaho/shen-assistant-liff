@@ -293,68 +293,72 @@
       ).trim().toUpperCase();
     }
 
-    async function initializeLiff() {
-      try {
-        const agentCode = getAgentCode();
+async function initializeLiff() {
+  try {
+    /*
+     * 必須先完成 LIFF 初始化。
+     * LINE 完成轉址後，網址中的 agent 才會恢復。
+     */
+    await liff.init({
+      liffId: LIFF_ID
+    });
 
-        if (!/^[A-Z0-9_-]{1,20}$/.test(agentCode)) {
-          showError(
-            '此連結缺少正確的業務員代碼，請向保險顧問索取新的連結。'
-          );
-          return;
-        }
-
-        await liff.init({
-          liffId: LIFF_ID
-        });
-
-        if (!liff.isLoggedIn()) {
-          liff.login({
-            redirectUri: window.location.href
-          });
-          return;
-        }
-
-        const idToken = liff.getIDToken();
-
-        if (!idToken) {
-          showError(
-            '目前無法取得 LINE 身分憑證，請關閉頁面後重新開啟。'
-          );
-          return;
-        }
-
-        agentCodeInput.value = agentCode;
-        idTokenInput.value = idToken;
-
-        let greeting = 'LINE 身分連接成功';
-
-        try {
-          const profile = await liff.getProfile();
-
-          if (profile && profile.displayName) {
-            greeting =
-              `您好，${profile.displayName}，LINE 身分連接成功`;
-          }
-        } catch (profileError) {
-          // 即使沒有取得暱稱，仍可繼續綁定。
-        }
-
-        statusMessage.textContent =
-          `${greeting}｜業務員代碼：${agentCode}`;
-
-        statusMessage.classList.remove('error');
-        formArea.style.display = 'block';
-
-      } catch (error) {
-        console.error(error);
-
-        showError(
-          'LINE 連接失敗，請關閉頁面後，從 LINE 重新開啟。'
-        );
-      }
+    if (!liff.isLoggedIn()) {
+      liff.login({
+        redirectUri: window.location.href
+      });
+      return;
     }
 
+    // LIFF 初始化完成後，再讀取業務員代碼
+    const agentCode = getAgentCode();
+
+    if (!/^[A-Z0-9_-]{1,20}$/.test(agentCode)) {
+      showError(
+        '此連結缺少正確的業務員代碼，請向保險顧問索取新的連結。'
+      );
+      return;
+    }
+
+    const idToken = liff.getIDToken();
+
+    if (!idToken) {
+      showError(
+        '目前無法取得 LINE 身分憑證，請關閉頁面後重新開啟。'
+      );
+      return;
+    }
+
+    agentCodeInput.value = agentCode;
+    idTokenInput.value = idToken;
+
+    let greeting = 'LINE 身分連接成功';
+
+    try {
+      const profile = await liff.getProfile();
+
+      if (profile && profile.displayName) {
+        greeting =
+          `您好，${profile.displayName}，LINE 身分連接成功`;
+      }
+    } catch (profileError) {
+      // 即使沒有取得暱稱，仍可繼續綁定。
+    }
+
+    statusMessage.textContent =
+      `${greeting}｜業務員代碼：${agentCode}`;
+
+    statusMessage.classList.remove('error');
+    formArea.style.display = 'block';
+
+  } catch (error) {
+    console.error(error);
+
+    showError(
+      'LINE 連接失敗，請關閉頁面後，從 LINE 重新開啟。'
+    );
+  }
+}
     mobileLast4Input.addEventListener('input', function () {
       this.value = this.value
         .replace(/\D/g, '')
