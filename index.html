@@ -2,14 +2,18 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
+    content="width=device-width, initial-scale=1"
   >
 
-  <title>神助理保單服務</title>
+  <title>神助理｜客戶身分綁定</title>
 
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script
+    charset="utf-8"
+    src="https://static.line-scdn.net/liff/edge/2/sdk.js"
+  ></script>
 
   <style>
     * {
@@ -18,125 +22,367 @@
 
     body {
       margin: 0;
-      padding: 24px;
-      min-height: 100vh;
-      background: #f5f7f6;
-      color: #333;
-      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      padding: 24px 18px;
+      background: #f4f7f5;
+      color: #333333;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 460px;
+      margin: 24px auto;
     }
 
     .card {
-      max-width: 520px;
-      margin: 50px auto;
-      padding: 32px 22px;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      padding: 28px 22px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #168c5b;
+      color: #ffffff;
+      font-size: 27px;
+      font-weight: bold;
+      line-height: 62px;
       text-align: center;
     }
 
     h1 {
-      margin-top: 0;
-      color: #06c755;
-      font-size: 28px;
+      margin: 0 0 10px;
+      color: #168c5b;
+      font-size: 25px;
+      text-align: center;
     }
 
-    #status {
-      margin-top: 24px;
-      white-space: pre-line;
-      line-height: 1.8;
-      font-size: 18px;
+    .description {
+      margin: 0 0 22px;
+      color: #666666;
+      font-size: 15px;
+      line-height: 1.7;
+      text-align: center;
     }
 
-    #agent {
-      margin-top: 16px;
-      color: #666;
+    .status {
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #eef7f2;
+      color: #276749;
+      font-size: 15px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .status.error {
+      background: #fff0f0;
+      color: #b83232;
+    }
+
+    .form-area {
+      display: none;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
       font-size: 16px;
+      font-weight: bold;
     }
 
-    .success {
-      color: #07883c;
+    input {
+      width: 100%;
+      height: 48px;
+      padding: 10px 12px;
+      border: 1px solid #cccccc;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #333333;
+      font-size: 17px;
     }
 
-    .error {
-      color: #c62828;
+    input:focus {
+      border-color: #168c5b;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(22, 140, 91, 0.12);
+    }
+
+    .hint {
+      margin-top: 6px;
+      color: #777777;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    button {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 6px;
+      border: 0;
+      border-radius: 12px;
+      background: #168c5b;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #a8b8b0;
+      cursor: not-allowed;
+    }
+
+    .privacy {
+      margin: 18px 4px 0;
+      color: #777777;
+      font-size: 13px;
+      line-height: 1.6;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
-  <main class="card">
-    <h1>神助理保單服務</h1>
+  <main class="container">
+    <section class="card">
+      <div class="logo">神</div>
 
-    <div id="status">
-      GitHub 網頁已載入，正在連接 LINE……
-    </div>
+      <h1>客戶身分綁定</h1>
 
-    <div id="agent"></div>
+      <p class="description">
+        為了讓您安全查詢自己的保單健檢資料，
+        請先完成身分資料確認。
+      </p>
+
+      <div id="statusMessage" class="status">
+        正在連接 LINE，請稍候……
+      </div>
+
+      <div id="formArea" class="form-area">
+        <form
+          id="bindingForm"
+          method="post"
+          action="https://script.google.com/macros/s/AKfycbw4t8XnHO4d97TRLHULGn1UZ2lBbYWpVC4PgD1xiQwBrFN2adAP_sc-S3HUX7NkqpjJDg/exec"
+        >
+          <input
+            id="agentCode"
+            name="agentCode"
+            type="hidden"
+          >
+
+          <input
+            id="idToken"
+            name="idToken"
+            type="hidden"
+          >
+
+          <div class="field">
+            <label for="customerName">姓名</label>
+
+            <input
+              id="customerName"
+              name="customerName"
+              type="text"
+              autocomplete="name"
+              maxlength="30"
+              placeholder="請輸入客戶資料表中的姓名"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="birthday">生日</label>
+
+            <input
+              id="birthday"
+              name="birthday"
+              type="date"
+              required
+            >
+
+            <div class="hint">
+              請選擇西元出生年月日。
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="mobileLast4">手機末四碼</label>
+
+            <input
+              id="mobileLast4"
+              name="mobileLast4"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="off"
+              minlength="4"
+              maxlength="4"
+              pattern="[0-9]{4}"
+              placeholder="例如：1234"
+              required
+            >
+
+            <div class="hint">
+              請輸入留存在保險顧問客戶資料中的手機末四碼。
+            </div>
+          </div>
+
+          <button id="submitButton" type="submit">
+            確認並綁定 LINE
+          </button>
+        </form>
+
+        <p class="privacy">
+          系統只會將經 LINE 官方驗證的帳號，
+          綁定到符合姓名、生日及手機末四碼的客戶資料。
+        </p>
+      </div>
+    </section>
   </main>
 
   <script>
     const LIFF_ID = '2009625468-abe9aOhu';
 
-    const statusElement = document.getElementById('status');
-    const agentElement = document.getElementById('agent');
+    const statusMessage =
+      document.getElementById('statusMessage');
 
-    function showStatus(message, className = '') {
-      statusElement.textContent = message;
-      statusElement.className = className;
+    const formArea =
+      document.getElementById('formArea');
+
+    const bindingForm =
+      document.getElementById('bindingForm');
+
+    const agentCodeInput =
+      document.getElementById('agentCode');
+
+    const idTokenInput =
+      document.getElementById('idToken');
+
+    const mobileLast4Input =
+      document.getElementById('mobileLast4');
+
+    const submitButton =
+      document.getElementById('submitButton');
+
+    function showError(message) {
+      statusMessage.textContent = message;
+      statusMessage.classList.add('error');
+      formArea.style.display = 'none';
     }
 
-    async function startLiff() {
+    function getAgentCode() {
+      const parameters =
+        new URLSearchParams(window.location.search);
+
+      return String(
+        parameters.get('agent') || ''
+      ).trim().toUpperCase();
+    }
+
+    async function initializeLiff() {
       try {
-        showStatus('步驟 1／4：LIFF SDK 已載入');
+        const agentCode = getAgentCode();
+
+        if (!/^[A-Z0-9_-]{1,20}$/.test(agentCode)) {
+          showError(
+            '此連結缺少正確的業務員代碼，請向保險顧問索取新的連結。'
+          );
+          return;
+        }
 
         await liff.init({
           liffId: LIFF_ID
         });
 
-        showStatus('步驟 2／4：LINE 初始化成功');
-
         if (!liff.isLoggedIn()) {
-          showStatus('步驟 3／4：正在前往 LINE 登入……');
-
           liff.login({
             redirectUri: window.location.href
           });
-
           return;
         }
 
-        showStatus('步驟 4／4：正在讀取 LINE 身分……');
-
-        const profile = await liff.getProfile();
         const idToken = liff.getIDToken();
 
         if (!idToken) {
-          throw new Error('未取得 LINE 身分憑證，請確認 openid 權限');
+          showError(
+            '目前無法取得 LINE 身分憑證，請關閉頁面後重新開啟。'
+          );
+          return;
         }
 
-        const parameters = new URL(window.location.href).searchParams;
-        const agentCode = parameters.get('agent') || '尚未指定';
+        agentCodeInput.value = agentCode;
+        idTokenInput.value = idToken;
 
-        showStatus(
-          'LINE 身分連接成功！\n您好，' + profile.displayName,
-          'success'
-        );
+        let greeting = 'LINE 身分連接成功';
 
-        agentElement.textContent =
-          '業務員代碼：' + agentCode;
+        try {
+          const profile = await liff.getProfile();
+
+          if (profile && profile.displayName) {
+            greeting =
+              `您好，${profile.displayName}，LINE 身分連接成功`;
+          }
+        } catch (profileError) {
+          // 即使沒有取得暱稱，仍可繼續綁定。
+        }
+
+        statusMessage.textContent =
+          `${greeting}｜業務員代碼：${agentCode}`;
+
+        statusMessage.classList.remove('error');
+        formArea.style.display = 'block';
 
       } catch (error) {
         console.error(error);
 
-        showStatus(
-          'LINE 連接失敗\n' + error.message,
-          'error'
+        showError(
+          'LINE 連接失敗，請關閉頁面後，從 LINE 重新開啟。'
         );
       }
     }
 
-    startLiff();
+    mobileLast4Input.addEventListener('input', function () {
+      this.value = this.value
+        .replace(/\D/g, '')
+        .slice(0, 4);
+    });
+
+    bindingForm.addEventListener('submit', function (event) {
+      const newIdToken = liff.getIDToken();
+
+      if (!newIdToken) {
+        event.preventDefault();
+
+        showError(
+          'LINE 身分憑證已失效，請關閉頁面後重新開啟。'
+        );
+        return;
+      }
+
+      idTokenInput.value = newIdToken;
+
+      submitButton.disabled = true;
+      submitButton.textContent = '正在確認資料，請稍候……';
+
+      statusMessage.textContent =
+        '正在安全驗證您的資料，請勿重複操作。';
+    });
+
+    initializeLiff();
   </script>
 </body>
 </html>
