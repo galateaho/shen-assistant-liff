@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- 神助理 GitHub Pages｜LINE 狀態分流相容版 V2｜2026-10-03 -->
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -207,6 +208,15 @@
           </button>
         </form>
 
+        <button
+          id="startBindingButton"
+          class="secondary"
+          type="button"
+          hidden
+        >
+          尚未綁定？開始身分綁定
+        </button>
+
         <div id="noPdfMessage" class="notice neutral" hidden>
           您已完成身分綁定，但保單健檢 PDF 尚未上傳，
           請聯絡保險顧問。
@@ -322,6 +332,8 @@
     const unboundArea = document.getElementById('unboundArea');
     const retryButton = document.getElementById('retryButton');
     const noPdfMessage = document.getElementById('noPdfMessage');
+    const startBindingButton =
+      document.getElementById('startBindingButton');
 
     const bindingForm = document.getElementById('bindingForm');
     const agentCodeInput = document.getElementById('agentCode');
@@ -395,6 +407,7 @@
       boundArea.hidden = true;
       unboundArea.hidden = false;
       retryButton.hidden = true;
+      startBindingButton.hidden = true;
     }
 
     function showBound(hasPdf) {
@@ -407,30 +420,26 @@
       unboundArea.hidden = true;
       boundArea.hidden = false;
       retryButton.hidden = true;
+      startBindingButton.hidden = true;
       pdfForm.hidden = !hasPdf;
       noPdfMessage.hidden = hasPdf;
     }
 
-    function isTrustedStatusOrigin(origin) {
-      try {
-        const url = new URL(origin);
-        const hostname = url.hostname.toLowerCase();
-
-        return url.protocol === 'https:' && (
-          hostname === 'script.google.com' ||
-          hostname === 'script.googleusercontent.com' ||
-          hostname.endsWith('.script.googleusercontent.com')
-        );
-      } catch (error) {
-        return false;
-      }
+    function showFallback() {
+      pageTitle.textContent = '神助理保戶服務';
+      description.textContent =
+        '已完成綁定者可直接查閱保單健檢；尚未綁定者請開始身分綁定。';
+      statusMessage.textContent = currentGreeting;
+      statusMessage.classList.remove('error');
+      unboundArea.hidden = true;
+      boundArea.hidden = false;
+      pdfForm.hidden = false;
+      noPdfMessage.hidden = true;
+      startBindingButton.hidden = false;
+      retryButton.hidden = true;
     }
 
     function handleStatusMessage(event) {
-      if (!isTrustedStatusOrigin(event.origin)) {
-        return;
-      }
-
       const data = event.data;
 
       if (
@@ -502,9 +511,8 @@
       }
 
       statusTimeoutId = window.setTimeout(() => {
-        showError(
-          '綁定狀態確認逾時，請檢查網路後重新確認。'
-        );
+        statusTimeoutId = null;
+        showFallback();
       }, STATUS_TIMEOUT_MS);
 
       statusForm.submit();
@@ -607,6 +615,18 @@
     });
 
     retryButton.addEventListener('click', checkBindingStatus);
+
+    startBindingButton.addEventListener('click', function () {
+      pageTitle.textContent = '客戶身分綁定';
+      description.textContent =
+        '為了讓您安全查詢自己的保單健檢資料，請先完成身分資料確認。';
+      statusMessage.textContent =
+        `${currentGreeting}｜請填寫客戶身分資料`;
+      statusMessage.classList.remove('error');
+      boundArea.hidden = true;
+      unboundArea.hidden = false;
+    });
+
     window.addEventListener('message', handleStatusMessage);
 
     initializeLiff();
