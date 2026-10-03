@@ -2,22 +2,22 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
   >
-
-  <title>神助理｜客戶身分綁定</title>
-
+  <title>神助理｜保戶服務</title>
   <script
     charset="utf-8"
     src="https://static.line-scdn.net/liff/edge/2/sdk.js"
   ></script>
-
   <style>
     * {
       box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     body {
@@ -74,14 +74,15 @@
       text-align: center;
     }
 
-    .status {
+    .status,
+    .notice {
       margin-bottom: 20px;
       padding: 12px 14px;
       border-radius: 10px;
       background: #eef7f2;
       color: #276749;
       font-size: 15px;
-      line-height: 1.5;
+      line-height: 1.6;
       text-align: center;
     }
 
@@ -90,8 +91,19 @@
       color: #b83232;
     }
 
-    .form-area {
-      display: none;
+    .notice.neutral {
+      background: #f6f6f6;
+      color: #666666;
+    }
+
+    .section-title {
+      margin: 24px 0 20px;
+      padding-top: 20px;
+      border-top: 1px solid #dddddd;
+      color: #666666;
+      font-size: 15px;
+      line-height: 1.6;
+      text-align: center;
     }
 
     .field {
@@ -142,8 +154,16 @@
       cursor: pointer;
     }
 
+    button.secondary {
+      background: #ffffff;
+      color: #168c5b;
+      border: 1px solid #168c5b;
+    }
+
     button:disabled {
       background: #a8b8b0;
+      border-color: #a8b8b0;
+      color: #ffffff;
       cursor: not-allowed;
     }
 
@@ -162,83 +182,52 @@
     <section class="card">
       <div class="logo">神</div>
 
-      <h1>客戶身分綁定</h1>
+      <h1 id="pageTitle">神助理保戶服務</h1>
 
-      <p class="description">
-        為了讓您安全查詢自己的保單健檢資料，
-        請先完成身分資料確認。
+      <p id="description" class="description">
+        正在確認您的 LINE 身分與綁定狀態。
       </p>
 
       <div id="statusMessage" class="status">
         正在連接 LINE，請稍候……
       </div>
 
-      <div id="formArea" class="form-area">
-                <!-- 已綁定客戶查閱 PDF -->
-        <form
-          id="pdfForm"
-          method="post"
-          action="https://script.google.com/macros/s/AKfycbw4t8XnHO4d97TRLHULGn1UZ2lBbYWpVC4PgD1xiQwBrFN2adAP_sc-S3HUX7NkqpjJDg/exec"
-        >
-          <input
-            name="action"
-            type="hidden"
-            value="viewPdf"
-          >
+      <section id="boundArea" hidden>
+        <div class="notice">
+          您已完成身分綁定，可以安全查閱自己的保單健檢資料。
+        </div>
 
-          <input
-            id="pdfAgentCode"
-            name="agentCode"
-            type="hidden"
-          >
+        <form id="pdfForm" method="post">
+          <input name="action" type="hidden" value="viewPdf">
+          <input id="pdfAgentCode" name="agentCode" type="hidden">
+          <input id="pdfIdToken" name="idToken" type="hidden">
 
-          <input
-            id="pdfIdToken"
-            name="idToken"
-            type="hidden"
-          >
-
-          <button
-            id="viewPdfButton"
-            type="submit"
-          >
+          <button id="viewPdfButton" type="submit">
             查看我的保單健檢
           </button>
         </form>
 
-        <div
-          style="
-            margin: 24px 0 20px;
-            padding-top: 20px;
-            border-top: 1px solid #dddddd;
-            color: #666666;
-            font-size: 15px;
-            line-height: 1.6;
-            text-align: center;
-          "
-        >
-          尚未完成綁定嗎？請填寫以下資料
+        <div id="noPdfMessage" class="notice neutral" hidden>
+          您已完成身分綁定，但保單健檢 PDF 尚未上傳，
+          請聯絡保險顧問。
         </div>
-        <form
-          id="bindingForm"
-          method="post"
-          action="https://script.google.com/macros/s/AKfycbw4t8XnHO4d97TRLHULGn1UZ2lBbYWpVC4PgD1xiQwBrFN2adAP_sc-S3HUX7NkqpjJDg/exec"
-        >
-          <input
-            id="agentCode"
-            name="agentCode"
-            type="hidden"
-          >
 
-          <input
-            id="idToken"
-            name="idToken"
-            type="hidden"
-          >
+        <p class="privacy">
+          如需更換綁定身分，請聯絡保險顧問協助解除原綁定。
+        </p>
+      </section>
+
+      <section id="unboundArea" hidden>
+        <div class="section-title">
+          尚未完成綁定，請填寫以下資料
+        </div>
+
+        <form id="bindingForm" method="post">
+          <input id="agentCode" name="agentCode" type="hidden">
+          <input id="idToken" name="idToken" type="hidden">
 
           <div class="field">
             <label for="customerName">姓名</label>
-
             <input
               id="customerName"
               name="customerName"
@@ -252,14 +241,12 @@
 
           <div class="field">
             <label for="birthday">生日</label>
-
             <input
               id="birthday"
               name="birthday"
               type="date"
               required
             >
-
             <div class="hint">
               請選擇西元出生年月日。
             </div>
@@ -267,7 +254,6 @@
 
           <div class="field">
             <label for="mobileLast4">手機末四碼</label>
-
             <input
               id="mobileLast4"
               name="mobileLast4"
@@ -280,7 +266,6 @@
               placeholder="例如：1234"
               required
             >
-
             <div class="hint">
               請輸入留存在保險顧問客戶資料中的手機末四碼。
             </div>
@@ -295,152 +280,307 @@
           系統只會將經 LINE 官方驗證的帳號，
           綁定到符合姓名、生日及手機末四碼的客戶資料。
         </p>
-      </div>
+      </section>
+
+      <button id="retryButton" class="secondary" type="button" hidden>
+        重新確認
+      </button>
+
+      <form
+        id="statusForm"
+        method="post"
+        target="statusFrame"
+        hidden
+      >
+        <input name="action" type="hidden" value="checkBindingStatus">
+        <input id="statusAgentCode" name="agentCode" type="hidden">
+        <input id="statusIdToken" name="idToken" type="hidden">
+        <input id="statusNonce" name="requestNonce" type="hidden">
+      </form>
+
+      <iframe
+        id="statusFrame"
+        name="statusFrame"
+        title="綁定狀態確認"
+        hidden
+      ></iframe>
     </section>
   </main>
 
   <script>
     const LIFF_ID = '2009625468-abe9aOhu';
+    const WEB_APP_URL =
+      'https://script.google.com/macros/s/AKfycbw4t8XnHO4d97TRLHULGn1UZ2lBbYWpVC4PgD1xiQwBrFN2adAP_sc-S3HUX7NkqpjJDg/exec';
+    const STATUS_MESSAGE_SOURCE =
+      'shen-assistant-binding-status';
+    const STATUS_TIMEOUT_MS = 15000;
 
-    const statusMessage =
-      document.getElementById('statusMessage');
+    const pageTitle = document.getElementById('pageTitle');
+    const description = document.getElementById('description');
+    const statusMessage = document.getElementById('statusMessage');
+    const boundArea = document.getElementById('boundArea');
+    const unboundArea = document.getElementById('unboundArea');
+    const retryButton = document.getElementById('retryButton');
+    const noPdfMessage = document.getElementById('noPdfMessage');
 
-    const formArea =
-      document.getElementById('formArea');
+    const bindingForm = document.getElementById('bindingForm');
+    const agentCodeInput = document.getElementById('agentCode');
+    const idTokenInput = document.getElementById('idToken');
+    const mobileLast4Input = document.getElementById('mobileLast4');
+    const submitButton = document.getElementById('submitButton');
 
-    const bindingForm =
-      document.getElementById('bindingForm');
+    const pdfForm = document.getElementById('pdfForm');
+    const pdfAgentCodeInput = document.getElementById('pdfAgentCode');
+    const pdfIdTokenInput = document.getElementById('pdfIdToken');
+    const viewPdfButton = document.getElementById('viewPdfButton');
 
-    const agentCodeInput =
-      document.getElementById('agentCode');
+    const statusForm = document.getElementById('statusForm');
+    const statusAgentCodeInput =
+      document.getElementById('statusAgentCode');
+    const statusIdTokenInput =
+      document.getElementById('statusIdToken');
+    const statusNonceInput =
+      document.getElementById('statusNonce');
 
-    const idTokenInput =
-      document.getElementById('idToken');
+    let currentAgentCode = '';
+    let currentGreeting = 'LINE 身分連接成功';
+    let currentRequestNonce = '';
+    let statusTimeoutId = null;
 
-    const mobileLast4Input =
-      document.getElementById('mobileLast4');
-
-    const submitButton =
-      document.getElementById('submitButton');
-        const pdfForm =
-      document.getElementById('pdfForm');
-
-    const pdfAgentCodeInput =
-      document.getElementById('pdfAgentCode');
-
-    const pdfIdTokenInput =
-      document.getElementById('pdfIdToken');
-
-    const viewPdfButton =
-      document.getElementById('viewPdfButton');
-
-    function showError(message) {
-      statusMessage.textContent = message;
-      statusMessage.classList.add('error');
-      formArea.style.display = 'none';
-    }
+    bindingForm.action = WEB_APP_URL;
+    pdfForm.action = WEB_APP_URL;
+    statusForm.action = WEB_APP_URL;
 
     function getAgentCode() {
       const parameters =
         new URLSearchParams(window.location.search);
 
-      return String(
-        parameters.get('agent') || ''
-      ).trim().toUpperCase();
+      return String(parameters.get('agent') || '')
+        .trim()
+        .toUpperCase();
     }
 
-async function initializeLiff() {
-  try {
-    /*
-     * 必須先完成 LIFF 初始化。
-     * LINE 完成轉址後，網址中的 agent 才會恢復。
-     */
-    await liff.init({
-      liffId: LIFF_ID
-    });
+    function createRequestNonce() {
+      const randomValues = new Uint32Array(4);
+      window.crypto.getRandomValues(randomValues);
 
-    if (!liff.isLoggedIn()) {
-      liff.login({
-        redirectUri: window.location.href
-      });
-      return;
+      return Array.from(randomValues)
+        .map(value => value.toString(16).padStart(8, '0'))
+        .join('');
     }
 
-    // LIFF 初始化完成後，再讀取業務員代碼
-    const agentCode = getAgentCode();
-
-    if (!/^[A-Z0-9_-]{1,20}$/.test(agentCode)) {
-      showError(
-        '此連結缺少正確的業務員代碼，請向保險顧問索取新的連結。'
-      );
-      return;
+    function hideServiceAreas() {
+      boundArea.hidden = true;
+      unboundArea.hidden = true;
+      retryButton.hidden = true;
     }
 
-    const idToken = liff.getIDToken();
-
-    if (!idToken) {
-      showError(
-        '目前無法取得 LINE 身分憑證，請關閉頁面後重新開啟。'
-      );
-      return;
+    function showError(message) {
+      hideServiceAreas();
+      pageTitle.textContent = '暫時無法確認身分';
+      description.textContent =
+        '請確認網路連線後重新嘗試，或從 LINE 再次開啟服務。';
+      statusMessage.textContent = message;
+      statusMessage.classList.add('error');
+      retryButton.hidden = false;
     }
 
-    agentCodeInput.value = agentCode;
-    idTokenInput.value = idToken;
+    function showUnbound() {
+      pageTitle.textContent = '客戶身分綁定';
+      description.textContent =
+        '為了讓您安全查詢自己的保單健檢資料，請先完成身分資料確認。';
+      statusMessage.textContent =
+        `${currentGreeting}｜尚未完成客戶身分綁定`;
+      statusMessage.classList.remove('error');
+      boundArea.hidden = true;
+      unboundArea.hidden = false;
+      retryButton.hidden = true;
+    }
 
-            pdfAgentCodeInput.value = agentCode;
-        pdfIdTokenInput.value = idToken;
-    
-    let greeting = 'LINE 身分連接成功';
+    function showBound(hasPdf) {
+      pageTitle.textContent = '神助理保戶服務';
+      description.textContent =
+        '您的 LINE 身分已經過安全驗證。';
+      statusMessage.textContent =
+        `${currentGreeting}｜已完成客戶身分綁定`;
+      statusMessage.classList.remove('error');
+      unboundArea.hidden = true;
+      boundArea.hidden = false;
+      retryButton.hidden = true;
+      pdfForm.hidden = !hasPdf;
+      noPdfMessage.hidden = hasPdf;
+    }
 
-    try {
-      const profile = await liff.getProfile();
+    function isTrustedStatusOrigin(origin) {
+      try {
+        const url = new URL(origin);
+        const hostname = url.hostname.toLowerCase();
 
-      if (profile && profile.displayName) {
-        greeting =
-          `您好，${profile.displayName}，LINE 身分連接成功`;
+        return url.protocol === 'https:' && (
+          hostname === 'script.google.com' ||
+          hostname === 'script.googleusercontent.com' ||
+          hostname.endsWith('.script.googleusercontent.com')
+        );
+      } catch (error) {
+        return false;
       }
-    } catch (profileError) {
-      // 即使沒有取得暱稱，仍可繼續綁定。
     }
 
-    statusMessage.textContent =
-      `${greeting}｜業務員代碼：${agentCode}`;
+    function handleStatusMessage(event) {
+      if (!isTrustedStatusOrigin(event.origin)) {
+        return;
+      }
 
-    statusMessage.classList.remove('error');
-    formArea.style.display = 'block';
+      const data = event.data;
 
-  } catch (error) {
-    console.error(error);
+      if (
+        !data ||
+        data.source !== STATUS_MESSAGE_SOURCE ||
+        data.requestNonce !== currentRequestNonce
+      ) {
+        return;
+      }
 
-    showError(
-      'LINE 連接失敗，請關閉頁面後，從 LINE 重新開啟。'
-    );
-  }
-}
-        pdfForm.addEventListener('submit', function (event) {
-      const newIdToken = liff.getIDToken();
+      if (statusTimeoutId) {
+        window.clearTimeout(statusTimeoutId);
+        statusTimeoutId = null;
+      }
 
-      if (!newIdToken) {
-        event.preventDefault();
+      if (!data.success) {
+        showError(
+          data.message ||
+          '目前無法確認綁定狀態，請稍後再試。'
+        );
+        return;
+      }
 
+      if (data.bound) {
+        showBound(Boolean(data.hasPdf));
+      } else {
+        showUnbound();
+      }
+    }
+
+    function getCurrentIdToken() {
+      if (typeof liff === 'undefined' || !liff.isLoggedIn()) {
+        return '';
+      }
+
+      return String(liff.getIDToken() || '').trim();
+    }
+
+    function checkBindingStatus() {
+      const idToken = getCurrentIdToken();
+
+      if (!idToken) {
         showError(
           'LINE 身分憑證已失效，請關閉頁面後重新開啟。'
         );
         return;
       }
 
-      pdfIdTokenInput.value = newIdToken;
+      currentRequestNonce = createRequestNonce();
+      statusAgentCodeInput.value = currentAgentCode;
+      statusIdTokenInput.value = idToken;
+      statusNonceInput.value = currentRequestNonce;
 
+      agentCodeInput.value = currentAgentCode;
+      idTokenInput.value = idToken;
+      pdfAgentCodeInput.value = currentAgentCode;
+      pdfIdTokenInput.value = idToken;
+
+      hideServiceAreas();
+      pageTitle.textContent = '神助理保戶服務';
+      description.textContent =
+        '正在確認您的 LINE 身分與綁定狀態。';
+      statusMessage.textContent =
+        '正在安全確認綁定狀態，請稍候……';
+      statusMessage.classList.remove('error');
+
+      if (statusTimeoutId) {
+        window.clearTimeout(statusTimeoutId);
+      }
+
+      statusTimeoutId = window.setTimeout(() => {
+        showError(
+          '綁定狀態確認逾時，請檢查網路後重新確認。'
+        );
+      }, STATUS_TIMEOUT_MS);
+
+      statusForm.submit();
+    }
+
+    async function initializeLiff() {
+      try {
+        if (typeof liff === 'undefined') {
+          throw new Error('LINE 服務元件載入失敗。');
+        }
+
+        await liff.init({
+          liffId: LIFF_ID
+        });
+
+        if (!liff.isLoggedIn()) {
+          liff.login({
+            redirectUri: window.location.href
+          });
+          return;
+        }
+
+        currentAgentCode = getAgentCode();
+
+        if (!/^[A-Z0-9_-]{1,20}$/.test(currentAgentCode)) {
+          showError(
+            '此連結缺少正確的業務員代碼，請向保險顧問索取新的連結。'
+          );
+          return;
+        }
+
+        if (!getCurrentIdToken()) {
+          showError(
+            '目前無法取得 LINE 身分憑證，請關閉頁面後重新開啟。'
+          );
+          return;
+        }
+
+        try {
+          const profile = await liff.getProfile();
+
+          if (profile && profile.displayName) {
+            currentGreeting =
+              `您好，${profile.displayName}，LINE 身分連接成功`;
+          }
+        } catch (profileError) {
+          currentGreeting = 'LINE 身分連接成功';
+        }
+
+        checkBindingStatus();
+      } catch (error) {
+        showError(
+          'LINE 連接失敗，請關閉頁面後，從 LINE 重新開啟。'
+        );
+      }
+    }
+
+    pdfForm.addEventListener('submit', function (event) {
+      const idToken = getCurrentIdToken();
+
+      if (!idToken) {
+        event.preventDefault();
+        showError(
+          'LINE 身分憑證已失效，請關閉頁面後重新開啟。'
+        );
+        return;
+      }
+
+      pdfIdTokenInput.value = idToken;
       viewPdfButton.disabled = true;
-
       viewPdfButton.textContent =
         '正在安全開啟 PDF，請稍候……';
-
       statusMessage.textContent =
         '正在驗證 LINE 身分並讀取您的保單健檢資料。';
     });
-    
+
     mobileLast4Input.addEventListener('input', function () {
       this.value = this.value
         .replace(/\D/g, '')
@@ -448,28 +588,28 @@ async function initializeLiff() {
     });
 
     bindingForm.addEventListener('submit', function (event) {
-      const newIdToken = liff.getIDToken();
+      const idToken = getCurrentIdToken();
 
-      if (!newIdToken) {
+      if (!idToken) {
         event.preventDefault();
-
         showError(
           'LINE 身分憑證已失效，請關閉頁面後重新開啟。'
         );
         return;
       }
 
-      idTokenInput.value = newIdToken;
-
+      idTokenInput.value = idToken;
       submitButton.disabled = true;
-      submitButton.textContent = '正在確認資料，請稍候……';
-
+      submitButton.textContent =
+        '正在確認資料，請稍候……';
       statusMessage.textContent =
         '正在安全驗證您的資料，請勿重複操作。';
     });
+
+    retryButton.addEventListener('click', checkBindingStatus);
+    window.addEventListener('message', handleStatusMessage);
 
     initializeLiff();
   </script>
 </body>
 </html>
-新增已綁定客戶 PDF 查閱按鈕
