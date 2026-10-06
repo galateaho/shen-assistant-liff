@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 神助理 GitHub Pages｜個資告知與同意測試版 V4｜2026-10-06 -->
+<!-- 神助理共用前端頁面｜準客戶與個資同意測試版 V3｜2026-10-06 -->
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -118,7 +118,8 @@
       font-weight: bold;
     }
 
-    input {
+    input,
+    select {
       width: 100%;
       height: 48px;
       padding: 10px 12px;
@@ -129,7 +130,8 @@
       font-size: 17px;
     }
 
-    input:focus {
+    input:focus,
+    select:focus {
       border-color: #168c5b;
       outline: none;
       box-shadow: 0 0 0 3px rgba(22, 140, 91, 0.12);
@@ -286,6 +288,17 @@
         </p>
       </section>
 
+      <section id="pendingArea" hidden>
+        <div class="notice neutral">
+          您的基本資料與 LINE 綁定已完成，目前正等待保險顧問確認身分。
+          確認完成前，不會開放任何既有保單檔案。
+        </div>
+
+        <p class="privacy">
+          您仍可使用一般客戶服務；如需加速確認，請直接聯絡保險顧問。
+        </p>
+      </section>
+
       <section id="consentOnlyArea" hidden>
         <div class="notice neutral">
           您已完成身分綁定。為保障您的個人資料權益，
@@ -320,10 +333,16 @@
               <ol>
                 <li>
                   資料蒐集者：
-                  <span class="privacy-collector-value">所屬保險公司</span>。
+                  <span class="privacy-collector-value">您的保險顧問</span>。
                 </li>
                 <li>
-                  保戶服務窗口：
+                  所屬公司：
+                  <span class="privacy-affiliation-value">所屬保險公司</span>。
+                  所屬公司名稱僅用於說明業務員身分；本服務目前不是
+                  所屬公司的官方網站或官方資訊系統。
+                </li>
+                <li>
+                  客戶服務窗口：
                   <span class="privacy-service-contact-value">您的保險顧問</span>。
                 </li>
                 <li>
@@ -333,17 +352,23 @@
                   不得將資料用於其他目的。
                 </li>
                 <li>
-                  蒐集目的：客戶身分驗證、保單彙整資料查詢、
-                  生日及約定服務通知、服務調查與客戶聯絡。
+                  蒐集目的：建立客戶或準客戶資料、身分綁定與確認、
+                  保單彙整服務、生日及約定服務通知、服務調查與客戶聯絡。
                 </li>
                 <li>
                   資料類別：姓名、生日、聯絡資料、LINE身分識別碼、
-                  保單彙整檔案或連結、服務偏好及同意與使用紀錄。
+                  客戶類型、服務需求、保單彙整檔案或連結、
+                  服務偏好及同意與使用紀錄。
                 </li>
                 <li>
                   利用期間、地區、對象及方式：於提供服務及依法保存所需期間，
                   由保險顧問、必要協助人員及所使用的LINE、Google雲端服務，
                   在提供上述服務的必要範圍內使用。
+                </li>
+                <li>
+                  如您日後使用保單上傳或彙整功能，系統會在上傳前
+                  另行說明該次用途；請勿上傳病歷、診斷書、健檢或
+                  理賠醫療文件。
                 </li>
                 <li>
                   您可聯絡資料蒐集者，請求查詢、閱覽、複製、補充、更正、
@@ -377,6 +402,19 @@
             </label>
           </div>
 
+          <div class="consent-check">
+            <input
+              id="existingMarketingConsent"
+              name="marketingConsent"
+              type="checkbox"
+              value="agree"
+            >
+            <label for="existingMarketingConsent">
+              我願意接收活動、商品或投保資訊等行銷訊息（選填，
+              未勾選不影響基本客戶服務）。
+            </label>
+          </div>
+
           <button id="consentSubmitButton" type="submit">
             同意並繼續使用
           </button>
@@ -406,7 +444,7 @@
               type="text"
               autocomplete="name"
               maxlength="30"
-              placeholder="請輸入客戶資料表中的姓名"
+              placeholder="請輸入真實姓名"
               required
             >
           </div>
@@ -420,27 +458,38 @@
               required
             >
             <div class="hint">
-              請選擇西元出生年月日。
+              請選擇西元出生年月日。未滿 18 歲者，請由法定代理人
+              聯絡保險顧問辦理。
             </div>
           </div>
 
           <div class="field">
-            <label for="mobileLast4">手機末四碼</label>
+            <label for="mobileNumber">完整手機號碼</label>
             <input
-              id="mobileLast4"
-              name="mobileLast4"
+              id="mobileNumber"
+              name="mobileNumber"
               type="tel"
               inputmode="numeric"
-              autocomplete="off"
-              minlength="4"
-              maxlength="4"
-              pattern="[0-9]{4}"
-              placeholder="例如：1234"
+              autocomplete="tel"
+              minlength="9"
+              maxlength="15"
+              pattern="[0-9]{9,15}"
+              placeholder="例如：0986277300"
               required
             >
             <div class="hint">
-              請輸入留存在保險顧問客戶資料中的手機末四碼。
+              系統會以姓名、生日及完整手機號碼比對既有資料。
             </div>
+          </div>
+
+          <div class="field">
+            <label for="serviceNeed">目前需要的服務</label>
+            <select id="serviceNeed" name="serviceNeed" required>
+              <option value="">請選擇</option>
+              <option value="existingPolicyholder">已是這位顧問的保戶</option>
+              <option value="prospective">想了解投保或先建立聯絡</option>
+              <option value="policyReview">想整理現有保單</option>
+            </select>
           </div>
 
           <details class="privacy-notice">
@@ -449,10 +498,16 @@
               <ol>
                 <li>
                   資料蒐集者：
-                  <span class="privacy-collector-value">所屬保險公司</span>。
+                  <span class="privacy-collector-value">您的保險顧問</span>。
                 </li>
                 <li>
-                  保戶服務窗口：
+                  所屬公司：
+                  <span class="privacy-affiliation-value">所屬保險公司</span>。
+                  所屬公司名稱僅用於說明業務員身分；本服務目前不是
+                  所屬公司的官方網站或官方資訊系統。
+                </li>
+                <li>
+                  客戶服務窗口：
                   <span class="privacy-service-contact-value">您的保險顧問</span>。
                 </li>
                 <li>
@@ -462,17 +517,23 @@
                   不得將資料用於其他目的。
                 </li>
                 <li>
-                  蒐集目的：客戶身分驗證、保單彙整資料查詢、
-                  生日及約定服務通知、服務調查與客戶聯絡。
+                  蒐集目的：建立客戶或準客戶資料、身分綁定與確認、
+                  保單彙整服務、生日及約定服務通知、服務調查與客戶聯絡。
                 </li>
                 <li>
                   資料類別：姓名、生日、聯絡資料、LINE身分識別碼、
-                  保單彙整檔案或連結、服務偏好及同意與使用紀錄。
+                  客戶類型、服務需求、保單彙整檔案或連結、
+                  服務偏好及同意與使用紀錄。
                 </li>
                 <li>
                   利用期間、地區、對象及方式：於提供服務及依法保存所需期間，
                   由保險顧問、必要協助人員及所使用的LINE、Google雲端服務，
                   在提供上述服務的必要範圍內使用。
+                </li>
+                <li>
+                  如您日後使用保單上傳或彙整功能，系統會在上傳前
+                  另行說明該次用途；請勿上傳病歷、診斷書、健檢或
+                  理賠醫療文件。
                 </li>
                 <li>
                   您可聯絡資料蒐集者，請求查詢、閱覽、複製、補充、更正、
@@ -506,6 +567,19 @@
             </label>
           </div>
 
+          <div class="consent-check">
+            <input
+              id="newMarketingConsent"
+              name="marketingConsent"
+              type="checkbox"
+              value="agree"
+            >
+            <label for="newMarketingConsent">
+              我願意接收活動、商品或投保資訊等行銷訊息（選填，
+              未勾選不影響基本客戶服務）。
+            </label>
+          </div>
+
           <button id="submitButton" type="submit">
             確認並綁定 LINE
           </button>
@@ -513,7 +587,9 @@
 
         <p class="privacy">
           系統只會將經 LINE 官方驗證的帳號，
-          綁定到符合姓名、生日及手機末四碼的客戶資料。
+          綁定到符合姓名、生日及完整手機號碼的既有客戶資料。
+          查無資料時會建立一筆待顧問確認的準客戶資料，
+          確認前不會開放既有保單檔案。
         </p>
       </section>
 
@@ -550,12 +626,13 @@
       'shen-assistant-binding-status';
     const STATUS_TIMEOUT_MS = 15000;
     const PRIVACY_NOTICE_VERSION =
-      '2026-10-06-V2-TEST';
+      '2026-10-06-V3-TEST';
 
     const pageTitle = document.getElementById('pageTitle');
     const description = document.getElementById('description');
     const statusMessage = document.getElementById('statusMessage');
     const boundArea = document.getElementById('boundArea');
+    const pendingArea = document.getElementById('pendingArea');
     const consentOnlyArea =
       document.getElementById('consentOnlyArea');
     const unboundArea = document.getElementById('unboundArea');
@@ -567,7 +644,8 @@
     const bindingForm = document.getElementById('bindingForm');
     const agentCodeInput = document.getElementById('agentCode');
     const idTokenInput = document.getElementById('idToken');
-    const mobileLast4Input = document.getElementById('mobileLast4');
+    const birthdayInput = document.getElementById('birthday');
+    const mobileNumberInput = document.getElementById('mobileNumber');
     const submitButton = document.getElementById('submitButton');
     const newPrivacyConsent =
       document.getElementById('newPrivacyConsent');
@@ -602,6 +680,7 @@
     let statusTimeoutId = null;
     let currentPrivacyCollectorName = '您的保險顧問';
     let currentPrivacyServiceContactName = '您的保險顧問';
+    let currentPrivacyAffiliationName = '所屬保險公司';
     let currentPrivacyContact = '請聯絡您的保險顧問';
 
     bindingForm.action = WEB_APP_URL;
@@ -625,10 +704,20 @@
           data.privacyServiceContactName
         ).trim();
       }
+      if (data && data.privacyAffiliationName) {
+        currentPrivacyAffiliationName = String(
+          data.privacyAffiliationName
+        ).trim();
+      }
       document
         .querySelectorAll('.privacy-collector-value')
         .forEach(element => {
           element.textContent = currentPrivacyCollectorName;
+        });
+      document
+        .querySelectorAll('.privacy-affiliation-value')
+        .forEach(element => {
+          element.textContent = currentPrivacyAffiliationName;
         });
       document
         .querySelectorAll('.privacy-service-contact-value')
@@ -672,6 +761,7 @@
 
     function hideServiceAreas() {
       boundArea.hidden = true;
+      pendingArea.hidden = true;
       consentOnlyArea.hidden = true;
       unboundArea.hidden = true;
       retryButton.hidden = true;
@@ -695,6 +785,7 @@
         `${currentGreeting}｜尚未完成客戶身分綁定`;
       statusMessage.classList.remove('error');
       boundArea.hidden = true;
+      pendingArea.hidden = true;
       consentOnlyArea.hidden = true;
       unboundArea.hidden = false;
       retryButton.hidden = true;
@@ -711,10 +802,25 @@
       unboundArea.hidden = true;
       consentOnlyArea.hidden = true;
       boundArea.hidden = false;
+      pendingArea.hidden = true;
       retryButton.hidden = true;
       startBindingButton.hidden = true;
       pdfForm.hidden = !hasPdf;
       noPdfMessage.hidden = hasPdf;
+    }
+
+    function showPendingVerification() {
+      pageTitle.textContent = '客戶資料待確認';
+      description.textContent =
+        '您的基本資料已登錄，保險顧問確認後即可使用完整服務。';
+      statusMessage.textContent =
+        `${currentGreeting}｜已完成 LINE 綁定`;
+      statusMessage.classList.remove('error');
+      boundArea.hidden = true;
+      consentOnlyArea.hidden = true;
+      unboundArea.hidden = true;
+      pendingArea.hidden = false;
+      retryButton.hidden = true;
     }
 
     function showConsentOnly() {
@@ -725,6 +831,7 @@
         `${currentGreeting}｜請確認個資告知事項`;
       statusMessage.classList.remove('error');
       boundArea.hidden = true;
+      pendingArea.hidden = true;
       unboundArea.hidden = true;
       consentOnlyArea.hidden = false;
       retryButton.hidden = true;
@@ -739,6 +846,7 @@
       unboundArea.hidden = true;
       consentOnlyArea.hidden = true;
       boundArea.hidden = false;
+      pendingArea.hidden = true;
       pdfForm.hidden = false;
       noPdfMessage.hidden = true;
       startBindingButton.hidden = false;
@@ -773,7 +881,11 @@
 
       if (data.bound) {
         if (data.hasPrivacyConsent) {
-          showBound(Boolean(data.hasPdf));
+          if (data.pendingVerification) {
+            showPendingVerification();
+          } else {
+            showBound(Boolean(data.hasPdf));
+          }
         } else {
           showConsentOnly();
         }
@@ -904,11 +1016,32 @@
         '正在驗證 LINE 身分並讀取您的保單健檢資料。';
     });
 
-    mobileLast4Input.addEventListener('input', function () {
+    mobileNumberInput.addEventListener('input', function () {
       this.value = this.value
         .replace(/\D/g, '')
-        .slice(0, 4);
+        .slice(0, 15);
     });
+
+    function isUnderEighteen(birthdayValue) {
+      const parts = String(birthdayValue || '')
+        .split('-')
+        .map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        return false;
+      }
+      const today = new Date();
+      let age = today.getFullYear() - parts[0];
+      const birthdayPassed =
+        today.getMonth() + 1 > parts[1] ||
+        (
+          today.getMonth() + 1 === parts[1] &&
+          today.getDate() >= parts[2]
+        );
+      if (!birthdayPassed) {
+        age -= 1;
+      }
+      return age < 18;
+    }
 
     bindingForm.addEventListener('submit', function (event) {
       const idToken = getCurrentIdToken();
@@ -924,6 +1057,14 @@
       if (!newPrivacyConsent.checked) {
         event.preventDefault();
         window.alert('請先閱讀並勾選同意個人資料告知事項。');
+        return;
+      }
+
+      if (isUnderEighteen(birthdayInput.value)) {
+        event.preventDefault();
+        window.alert(
+          '未滿 18 歲者請由法定代理人聯絡保險顧問辦理，暫不開放自行送出。'
+        );
         return;
       }
 
@@ -970,6 +1111,7 @@
         `${currentGreeting}｜請填寫客戶身分資料`;
       statusMessage.classList.remove('error');
       boundArea.hidden = true;
+      pendingArea.hidden = true;
       consentOnlyArea.hidden = true;
       unboundArea.hidden = false;
     });
