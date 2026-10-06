@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 神助理 GitHub Pages｜LINE 狀態分流相容版 V2｜2026-10-03 -->
+<!-- 神助理 GitHub Pages｜個資告知與同意測試版 V4｜2026-10-06 -->
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -175,6 +175,65 @@
       line-height: 1.6;
       text-align: center;
     }
+
+    .privacy-notice {
+      margin: 20px 0 16px;
+      border: 1px solid #cfe3d8;
+      border-radius: 12px;
+      background: #f8fcfa;
+      color: #444444;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: left;
+    }
+
+    .privacy-notice summary {
+      padding: 14px;
+      color: #168c5b;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .privacy-notice-content {
+      padding: 0 16px 16px;
+      border-top: 1px solid #e2eee7;
+    }
+
+    .privacy-notice-content ol {
+      margin: 12px 0 0;
+      padding-left: 22px;
+    }
+
+    .consent-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 16px 0;
+      padding: 14px;
+      border: 1px solid #cccccc;
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .consent-check input {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      margin: 2px 0 0;
+    }
+
+    .consent-check label {
+      margin: 0;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1.6;
+    }
+
+    .version-note {
+      margin-top: 8px;
+      color: #777777;
+      font-size: 12px;
+    }
   </style>
 </head>
 
@@ -227,14 +286,117 @@
         </p>
       </section>
 
+      <section id="consentOnlyArea" hidden>
+        <div class="notice neutral">
+          您已完成身分綁定。為保障您的個人資料權益，
+          請先補做最新版個資告知與同意。
+        </div>
+
+        <form id="consentOnlyForm" method="post">
+          <input
+            name="action"
+            type="hidden"
+            value="acceptPrivacyConsent"
+          >
+          <input
+            id="consentAgentCode"
+            name="agentCode"
+            type="hidden"
+          >
+          <input
+            id="consentIdToken"
+            name="idToken"
+            type="hidden"
+          >
+          <input
+            class="privacy-version-input"
+            name="privacyNoticeVersion"
+            type="hidden"
+          >
+
+          <details class="privacy-notice" open>
+            <summary>個人資料告知事項（測試版）</summary>
+            <div class="privacy-notice-content">
+              <ol>
+                <li>
+                  資料蒐集者：
+                  <span class="privacy-collector-value">所屬保險公司</span>。
+                </li>
+                <li>
+                  保戶服務窗口：
+                  <span class="privacy-service-contact-value">您的保險顧問</span>。
+                </li>
+                <li>
+                  受委託系統及行政服務提供者：神助理。
+                  神助理僅於提供本服務所必要的範圍內，
+                  依委託協助資料整理、系統維護與通知排程，
+                  不得將資料用於其他目的。
+                </li>
+                <li>
+                  蒐集目的：客戶身分驗證、保單彙整資料查詢、
+                  生日及約定服務通知、服務調查與客戶聯絡。
+                </li>
+                <li>
+                  資料類別：姓名、生日、聯絡資料、LINE身分識別碼、
+                  保單彙整檔案或連結、服務偏好及同意與使用紀錄。
+                </li>
+                <li>
+                  利用期間、地區、對象及方式：於提供服務及依法保存所需期間，
+                  由保險顧問、必要協助人員及所使用的LINE、Google雲端服務，
+                  在提供上述服務的必要範圍內使用。
+                </li>
+                <li>
+                  您可聯絡資料蒐集者，請求查詢、閱覽、複製、補充、更正、
+                  停止蒐集處理利用或刪除。
+                </li>
+                <li>
+                  您可以選擇不提供；但將無法完成身分綁定，
+                  也無法使用個人化通知及保單查閱服務。
+                </li>
+              </ol>
+              <div class="version-note">
+                聯絡方式：
+                <span class="privacy-contact-value">請聯絡您的保險顧問</span><br>
+                告知版本：
+                <span class="privacy-version-value"></span>
+              </div>
+            </div>
+          </details>
+
+          <div class="consent-check">
+            <input
+              id="existingPrivacyConsent"
+              name="privacyConsent"
+              type="checkbox"
+              value="agree"
+              required
+            >
+            <label for="existingPrivacyConsent">
+              我已閱讀並瞭解上述個人資料告知事項，
+              同意在所述目的與範圍內蒐集、處理及利用我的個人資料。
+            </label>
+          </div>
+
+          <button id="consentSubmitButton" type="submit">
+            同意並繼續使用
+          </button>
+        </form>
+      </section>
+
       <section id="unboundArea" hidden>
         <div class="section-title">
           尚未完成綁定，請填寫以下資料
         </div>
 
         <form id="bindingForm" method="post">
+          <input name="action" type="hidden" value="bind">
           <input id="agentCode" name="agentCode" type="hidden">
           <input id="idToken" name="idToken" type="hidden">
+          <input
+            class="privacy-version-input"
+            name="privacyNoticeVersion"
+            type="hidden"
+          >
 
           <div class="field">
             <label for="customerName">姓名</label>
@@ -281,6 +443,69 @@
             </div>
           </div>
 
+          <details class="privacy-notice">
+            <summary>個人資料告知事項（請點此閱讀）</summary>
+            <div class="privacy-notice-content">
+              <ol>
+                <li>
+                  資料蒐集者：
+                  <span class="privacy-collector-value">所屬保險公司</span>。
+                </li>
+                <li>
+                  保戶服務窗口：
+                  <span class="privacy-service-contact-value">您的保險顧問</span>。
+                </li>
+                <li>
+                  受委託系統及行政服務提供者：神助理。
+                  神助理僅於提供本服務所必要的範圍內，
+                  依委託協助資料整理、系統維護與通知排程，
+                  不得將資料用於其他目的。
+                </li>
+                <li>
+                  蒐集目的：客戶身分驗證、保單彙整資料查詢、
+                  生日及約定服務通知、服務調查與客戶聯絡。
+                </li>
+                <li>
+                  資料類別：姓名、生日、聯絡資料、LINE身分識別碼、
+                  保單彙整檔案或連結、服務偏好及同意與使用紀錄。
+                </li>
+                <li>
+                  利用期間、地區、對象及方式：於提供服務及依法保存所需期間，
+                  由保險顧問、必要協助人員及所使用的LINE、Google雲端服務，
+                  在提供上述服務的必要範圍內使用。
+                </li>
+                <li>
+                  您可聯絡資料蒐集者，請求查詢、閱覽、複製、補充、更正、
+                  停止蒐集處理利用或刪除。
+                </li>
+                <li>
+                  您可以選擇不提供；但將無法完成身分綁定，
+                  也無法使用個人化通知及保單查閱服務。
+                </li>
+              </ol>
+              <div class="version-note">
+                聯絡方式：
+                <span class="privacy-contact-value">請聯絡您的保險顧問</span><br>
+                告知版本：
+                <span class="privacy-version-value"></span>
+              </div>
+            </div>
+          </details>
+
+          <div class="consent-check">
+            <input
+              id="newPrivacyConsent"
+              name="privacyConsent"
+              type="checkbox"
+              value="agree"
+              required
+            >
+            <label for="newPrivacyConsent">
+              我已閱讀並瞭解上述個人資料告知事項，
+              同意在所述目的與範圍內蒐集、處理及利用我的個人資料。
+            </label>
+          </div>
+
           <button id="submitButton" type="submit">
             確認並綁定 LINE
           </button>
@@ -324,11 +549,15 @@
     const STATUS_MESSAGE_SOURCE =
       'shen-assistant-binding-status';
     const STATUS_TIMEOUT_MS = 15000;
+    const PRIVACY_NOTICE_VERSION =
+      '2026-10-06-V2-TEST';
 
     const pageTitle = document.getElementById('pageTitle');
     const description = document.getElementById('description');
     const statusMessage = document.getElementById('statusMessage');
     const boundArea = document.getElementById('boundArea');
+    const consentOnlyArea =
+      document.getElementById('consentOnlyArea');
     const unboundArea = document.getElementById('unboundArea');
     const retryButton = document.getElementById('retryButton');
     const noPdfMessage = document.getElementById('noPdfMessage');
@@ -340,6 +569,19 @@
     const idTokenInput = document.getElementById('idToken');
     const mobileLast4Input = document.getElementById('mobileLast4');
     const submitButton = document.getElementById('submitButton');
+    const newPrivacyConsent =
+      document.getElementById('newPrivacyConsent');
+
+    const consentOnlyForm =
+      document.getElementById('consentOnlyForm');
+    const consentAgentCodeInput =
+      document.getElementById('consentAgentCode');
+    const consentIdTokenInput =
+      document.getElementById('consentIdToken');
+    const existingPrivacyConsent =
+      document.getElementById('existingPrivacyConsent');
+    const consentSubmitButton =
+      document.getElementById('consentSubmitButton');
 
     const pdfForm = document.getElementById('pdfForm');
     const pdfAgentCodeInput = document.getElementById('pdfAgentCode');
@@ -358,10 +600,57 @@
     let currentGreeting = 'LINE 身分連接成功';
     let currentRequestNonce = '';
     let statusTimeoutId = null;
+    let currentPrivacyCollectorName = '您的保險顧問';
+    let currentPrivacyServiceContactName = '您的保險顧問';
+    let currentPrivacyContact = '請聯絡您的保險顧問';
 
     bindingForm.action = WEB_APP_URL;
+    consentOnlyForm.action = WEB_APP_URL;
     pdfForm.action = WEB_APP_URL;
     statusForm.action = WEB_APP_URL;
+
+    function updatePrivacyNotice(data) {
+      if (data && data.privacyCollectorName) {
+        currentPrivacyCollectorName = String(
+          data.privacyCollectorName
+        ).trim();
+      }
+      if (data && data.privacyContact) {
+        currentPrivacyContact = String(
+          data.privacyContact
+        ).trim();
+      }
+      if (data && data.privacyServiceContactName) {
+        currentPrivacyServiceContactName = String(
+          data.privacyServiceContactName
+        ).trim();
+      }
+      document
+        .querySelectorAll('.privacy-collector-value')
+        .forEach(element => {
+          element.textContent = currentPrivacyCollectorName;
+        });
+      document
+        .querySelectorAll('.privacy-service-contact-value')
+        .forEach(element => {
+          element.textContent = currentPrivacyServiceContactName;
+        });
+      document
+        .querySelectorAll('.privacy-contact-value')
+        .forEach(element => {
+          element.textContent = currentPrivacyContact;
+        });
+      document
+        .querySelectorAll('.privacy-version-value')
+        .forEach(element => {
+          element.textContent = PRIVACY_NOTICE_VERSION;
+        });
+      document
+        .querySelectorAll('.privacy-version-input')
+        .forEach(element => {
+          element.value = PRIVACY_NOTICE_VERSION;
+        });
+    }
 
     function getAgentCode() {
       const parameters =
@@ -383,6 +672,7 @@
 
     function hideServiceAreas() {
       boundArea.hidden = true;
+      consentOnlyArea.hidden = true;
       unboundArea.hidden = true;
       retryButton.hidden = true;
     }
@@ -405,6 +695,7 @@
         `${currentGreeting}｜尚未完成客戶身分綁定`;
       statusMessage.classList.remove('error');
       boundArea.hidden = true;
+      consentOnlyArea.hidden = true;
       unboundArea.hidden = false;
       retryButton.hidden = true;
       startBindingButton.hidden = true;
@@ -418,11 +709,25 @@
         `${currentGreeting}｜已完成客戶身分綁定`;
       statusMessage.classList.remove('error');
       unboundArea.hidden = true;
+      consentOnlyArea.hidden = true;
       boundArea.hidden = false;
       retryButton.hidden = true;
       startBindingButton.hidden = true;
       pdfForm.hidden = !hasPdf;
       noPdfMessage.hidden = hasPdf;
+    }
+
+    function showConsentOnly() {
+      pageTitle.textContent = '個資告知與同意';
+      description.textContent =
+        '完成同意後，才能繼續使用個人化通知與保單查閱服務。';
+      statusMessage.textContent =
+        `${currentGreeting}｜請確認個資告知事項`;
+      statusMessage.classList.remove('error');
+      boundArea.hidden = true;
+      unboundArea.hidden = true;
+      consentOnlyArea.hidden = false;
+      retryButton.hidden = true;
     }
 
     function showFallback() {
@@ -432,6 +737,7 @@
       statusMessage.textContent = currentGreeting;
       statusMessage.classList.remove('error');
       unboundArea.hidden = true;
+      consentOnlyArea.hidden = true;
       boundArea.hidden = false;
       pdfForm.hidden = false;
       noPdfMessage.hidden = true;
@@ -463,8 +769,14 @@
         return;
       }
 
+      updatePrivacyNotice(data);
+
       if (data.bound) {
-        showBound(Boolean(data.hasPdf));
+        if (data.hasPrivacyConsent) {
+          showBound(Boolean(data.hasPdf));
+        } else {
+          showConsentOnly();
+        }
       } else {
         showUnbound();
       }
@@ -495,8 +807,11 @@
 
       agentCodeInput.value = currentAgentCode;
       idTokenInput.value = idToken;
+      consentAgentCodeInput.value = currentAgentCode;
+      consentIdTokenInput.value = idToken;
       pdfAgentCodeInput.value = currentAgentCode;
       pdfIdTokenInput.value = idToken;
+      updatePrivacyNotice(null);
 
       hideServiceAreas();
       pageTitle.textContent = '神助理保戶服務';
@@ -606,12 +921,43 @@
         return;
       }
 
+      if (!newPrivacyConsent.checked) {
+        event.preventDefault();
+        window.alert('請先閱讀並勾選同意個人資料告知事項。');
+        return;
+      }
+
       idTokenInput.value = idToken;
       submitButton.disabled = true;
       submitButton.textContent =
         '正在確認資料，請稍候……';
       statusMessage.textContent =
         '正在安全驗證您的資料，請勿重複操作。';
+    });
+
+    consentOnlyForm.addEventListener('submit', function (event) {
+      const idToken = getCurrentIdToken();
+
+      if (!idToken) {
+        event.preventDefault();
+        showError(
+          'LINE 身分憑證已失效，請關閉頁面後重新開啟。'
+        );
+        return;
+      }
+
+      if (!existingPrivacyConsent.checked) {
+        event.preventDefault();
+        window.alert('請先閱讀並勾選同意個人資料告知事項。');
+        return;
+      }
+
+      consentIdTokenInput.value = idToken;
+      consentSubmitButton.disabled = true;
+      consentSubmitButton.textContent =
+        '正在保存同意紀錄，請稍候……';
+      statusMessage.textContent =
+        '正在安全確認您的 LINE 身分與同意紀錄。';
     });
 
     retryButton.addEventListener('click', checkBindingStatus);
@@ -624,11 +970,13 @@
         `${currentGreeting}｜請填寫客戶身分資料`;
       statusMessage.classList.remove('error');
       boundArea.hidden = true;
+      consentOnlyArea.hidden = true;
       unboundArea.hidden = false;
     });
 
     window.addEventListener('message', handleStatusMessage);
 
+    updatePrivacyNotice(null);
     initializeLiff();
   </script>
 </body>
